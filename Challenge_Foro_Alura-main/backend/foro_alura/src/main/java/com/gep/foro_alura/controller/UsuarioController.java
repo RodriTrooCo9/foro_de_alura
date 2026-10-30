@@ -31,7 +31,7 @@ public class UsuarioController {
     private UsuarioRepository repository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
 
     @Autowired
     List<ValidarCrearUsuario> crearValidador;
@@ -49,7 +49,7 @@ public class UsuarioController {
         Usuario usuario = new Usuario(crearUsuarioDTO, hashedPassword);
 
         repository.save(usuario);
-        var uri = uriBuilder.path("/usuarios/{username}").buildAndExpand(usuario.getUsername()).toUri();
+        var uri = uriBuilder.path("/usuarios/username/{username}").buildAndExpand(usuario.getUsername()).toUri();
         return ResponseEntity.created(uri).body(new DetallesUsuarioDTO(usuario));
     }
 

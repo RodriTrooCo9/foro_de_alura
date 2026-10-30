@@ -20,7 +20,7 @@ public class SolucionDuplicada implements ValidarRespuestaActualizada{
 
     @Override
     public void validate(ActualizarRespuestaDTO data, Long respuestaId) {
-       if (data.solucion()){
+       if (Boolean.TRUE.equals(data.solucion())){
            Respuesta respuesta = respuestaRepository.getReferenceById(respuestaId);
            var topicoResuelto = topicoRepository.getReferenceById(respuesta.getTopico().getId());
            if (topicoResuelto.getEstado() == Estado.CLOSED){

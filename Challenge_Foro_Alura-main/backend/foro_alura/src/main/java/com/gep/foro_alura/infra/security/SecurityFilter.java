@@ -27,14 +27,28 @@ public class SecurityFilter extends OncePerRequestFilter {
         var authHeader = request.getHeader("Authorization");
 
         if (authHeader != null){
+            if (!authHeader.startsWith("Bearer ")) {
+                response.sendError(401, "Invalid authorization header");
+                return;
+            }
+            try {
             var token = authHeader.replace("Bearer ", "");
             var username = tokenService.getSubject(token);
 
             if (username != null){
                 var usuario = usuarioRepository.findByUsername(username);
+                if (usuario == null || !usuario.isEnabled()) {
+                    response.sendError(401, "Invalid user");
+                    return;
+                }
                 var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            }
+            } catch (com.auth0.jwt.exceptions.JWTVerificationException e) {
+                SecurityContextHolder.clearContext();
+                response.sendError(401, "Invalid or expired token");
+                return;
             }
         }
         filterChain.doFilter(request, response);

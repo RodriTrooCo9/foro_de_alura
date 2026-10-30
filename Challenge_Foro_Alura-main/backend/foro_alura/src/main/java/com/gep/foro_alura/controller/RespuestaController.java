@@ -72,7 +72,7 @@ public class RespuestaController {
        return ResponseEntity.ok(pagina);
     }
 
-    @GetMapping("/usuario/{nombreUsuario}")
+    @GetMapping("/usuario/{usuarioId}")
     @Operation(summary = "Lee todas las respuestas del nombre de usuario proporcionado.")
     public ResponseEntity<Page<DetalleRespuestaDTO>> leerRespuestasDeUsuarios(@PageableDefault(size = 5, sort = {"ultimaActualizacion"}, direction = Direction.ASC) Pageable pageable, @PathVariable Long usuarioId){
         var pagina = respuestaRepository.findAllByUsuarioId(usuarioId, pageable).map(DetalleRespuestaDTO::new);
@@ -108,7 +108,7 @@ public class RespuestaController {
         Respuesta respuesta = respuestaRepository.getReferenceById(id);
         respuesta.actualizarRespuesta(actualizarRespuestaDTO);
 
-        if(actualizarRespuestaDTO.solucion()){
+        if(Boolean.TRUE.equals(actualizarRespuestaDTO.solucion())){
             var temaResuelto = topicoRepository.getReferenceById(respuesta.getTopico().getId());
             temaResuelto.setEstado(Estado.CLOSED);
         }

@@ -36,32 +36,12 @@ public class TokenService {
     }
 
     public String getSubject(String token){
-        if (token == null){
-            throw new RuntimeException("Token is null");
-        }
-
-        DecodedJWT verifier = null;
-
-        //validar firma
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(apiSecret);
-            verifier = JWT.require(algorithm)
-                    .withIssuer("alura")
-                    .build()
-                    .verify(token);
-            verifier.getSubject();
-
-        }catch (JWTVerificationException e){
-            System.out.println(e.toString()); ////Esto podría mejorarse para que devuelva "token no válido" o "token caducado" en el cuerpo y no en la consola
-        }
-        if (verifier.getSubject() == null){
-            throw new RuntimeException("Invalid verifier");
-        }
-        return verifier.getSubject();
+        return JWT.require(Algorithm.HMAC256(apiSecret))
+                .withIssuer("alura").build().verify(token).getSubject();
     }
 
     private Instant generarFechaVencimiento() {
-        return LocalDateTime.now().plusHours(6).toInstant(ZoneOffset.of("-03:00"));
+        return Instant.now().plusSeconds(6 * 60 * 60);
     }
 
 }

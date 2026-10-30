@@ -15,6 +15,8 @@ public class AuthenticationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return usuarioRepository.findByUsername(username);
+        var usuario = usuarioRepository.findByUsername(username);
+        if (usuario == null) throw new UsernameNotFoundException("Usuario no encontrado");
+        return usuario;
     }
 }
